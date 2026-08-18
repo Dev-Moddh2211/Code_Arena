@@ -80,7 +80,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       </div>
 
       {/* Monaco Editor Component with Dark Theme */}
-      <div className="flex-1 min-h-[300px] bg-[#0d131f]">
+      <div className="flex-1 min-h-0 bg-[#0d131f]">
         <Editor
           height="100%"
           language={getMonacoLanguage(language)}

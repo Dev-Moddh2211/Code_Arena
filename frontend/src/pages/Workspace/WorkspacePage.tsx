@@ -361,75 +361,81 @@ export const WorkspacePage: React.FC = () => {
             </div>
           }
           right={
-            <div className="flex flex-col h-full gap-2.5 overflow-hidden">
-              {/* Code Editor (Top 60%) */}
-              <div className="h-[60%] flex flex-col min-h-0">
-                <CodeEditor
-                  language={language}
-                  code={code}
-                  onChange={(val) => setCode(val || '')}
-                  onReset={handleResetCode}
-                  onLanguageChange={handleLanguageChange}
-                  languages={supportedLanguages}
-                />
-              </div>
+            <ResizableSplitPane
+              direction="vertical"
+              defaultSplit={58}
+              minFirstSize={180}
+              minSecondSize={140}
+              storageKey="arena_editor_split"
+              top={
+                <div className="flex flex-col h-full min-h-0">
+                  <CodeEditor
+                    language={language}
+                    code={code}
+                    onChange={(val) => setCode(val || '')}
+                    onReset={handleResetCode}
+                    onLanguageChange={handleLanguageChange}
+                    languages={supportedLanguages}
+                  />
+                </div>
+              }
+              bottom={
+                <div className="flex flex-col h-full min-h-0 bg-[#0d131f]/95 border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
+                  {/* Toggle between Testcases and Console Output */}
+                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1b2436] bg-[#090e18] text-xs">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setBottomTab('testcases')}
+                        className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                          bottomTab === 'testcases'
+                            ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        Test Cases
+                      </button>
+                      <button
+                        onClick={() => setBottomTab('console')}
+                        className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                          bottomTab === 'console'
+                            ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        Console Output
+                      </button>
+                    </div>
 
-              {/* Bottom Diagnostics / Test Cases Panel (40%) */}
-              <div className="h-[40%] flex flex-col min-h-0 bg-[#0d131f]/95 border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
-                {/* Toggle between Testcases and Console Output */}
-                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1b2436] bg-[#090e18] text-xs">
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => setBottomTab('testcases')}
-                      className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
-                        bottomTab === 'testcases'
-                          ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      Test Cases
-                    </button>
-                    <button
-                      onClick={() => setBottomTab('console')}
-                      className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
-                        bottomTab === 'console'
-                          ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      Console Output
-                    </button>
+                    {executionResult && (
+                      <div className="text-[11px] font-mono">
+                        {executionResult.status === 'accepted' ? (
+                          <span className="text-emerald-400 font-semibold">✓ Accepted</span>
+                        ) : (
+                          <span className="text-rose-400 font-semibold capitalize">
+                            {executionResult.status.replace(/_/g, ' ')}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {executionResult && (
-                    <div className="text-[11px] font-mono">
-                      {executionResult.status === 'accepted' ? (
-                        <span className="text-emerald-400 font-semibold">✓ Accepted</span>
-                      ) : (
-                        <span className="text-rose-400 font-semibold capitalize">
-                          {executionResult.status.replace(/_/g, ' ')}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* Sub-panel content */}
+                  <div className="flex-1 overflow-hidden">
+                    {bottomTab === 'testcases' ? (
+                      <TestCasePanel
+                        sampleCases={sampleCases}
+                        customInput={customInput}
+                        onCustomInputChange={setCustomInput}
+                        isCustom={isCustom}
+                        onToggleCustom={setIsCustom}
+                      />
+                    ) : (
+                      <ConsolePanel result={executionResult} isRunning={isRunning} />
+                    )}
+                  </div>
                 </div>
-
-                {/* Sub-panel content */}
-                <div className="flex-1 overflow-hidden">
-                  {bottomTab === 'testcases' ? (
-                    <TestCasePanel
-                      sampleCases={sampleCases}
-                      customInput={customInput}
-                      onCustomInputChange={setCustomInput}
-                      isCustom={isCustom}
-                      onToggleCustom={setIsCustom}
-                    />
-                  ) : (
-                    <ConsolePanel result={executionResult} isRunning={isRunning} />
-                  )}
-                </div>
-              </div>
-            </div>
+              }
+            />
           }
         />
       </div>
