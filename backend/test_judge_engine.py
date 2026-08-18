@@ -311,7 +311,7 @@ def run_comprehensive_judge_test_suite():
     )
     record_test("C++ Valid execution -> Accepted", res["status"] == "accepted")
 
-    # 35. C++ Segmentation fault (SIGSEGV / exit 139)
+    # 35. C++ Segmentation Fault (SIGSEGV)
     res = runner.execute_test_cases(
         language="cpp",
         user_code="""
@@ -324,22 +324,33 @@ def run_comprehensive_judge_test_suite():
         wrapper_template="{{USER_CODE}}",
         test_cases=[{"id": "1", "input_json": "[]", "expected_output_json": "42", "is_sample": True}]
     )
-    record_test("C++ Segmentation Fault (SIGSEGV) detection", res["status"] == "runtime_error" and ("Segmentation fault" in res["error_message"] or res["test_results"][0]["exit_code"] in [139, -11, -signal.SIGSEGV]))
+    record_test("C++ Segmentation Fault (SIGSEGV) detection", res["status"] == "runtime_error" and ("SEGV" in res["error_message"] or "SIGSEGV" in res["error_message"] or "SIGABRT" in res["error_message"] or "Segmentation" in res["error_message"] or res["test_results"][0]["exit_code"] in [139, -11, 134, -6, -signal.SIGSEGV]))
 
-    # 36. C++ Division by Zero (SIGFPE)
+    # 36. C++ Division by Zero (SIGFPE / UBSan abort)
     res = runner.execute_test_cases(
         language="cpp",
         user_code="""
-        #include <csignal>
+        #include <vector>
+        using namespace std;
+        int solve(vector<int>& prices) {
+            int x = 10 / 0;
+            return x;
+        }
+        """,
+        wrapper_template="""
+        #include <iostream>
+        #include <vector>
+        using namespace std;
+        {{USER_CODE}}
         int main() {
-            raise(SIGFPE);
+            vector<int> p = {7, 1, 5, 3, 6, 4};
+            cout << solve(p) << endl;
             return 0;
         }
         """,
-        wrapper_template="{{USER_CODE}}",
         test_cases=[{"id": "1", "input_json": "[]", "expected_output_json": "0", "is_sample": True}]
     )
-    record_test("C++ Division by zero (SIGFPE) crash detection", res["status"] == "runtime_error")
+    record_test("C++ Division by zero (SIGFPE) crash detection", res["status"] == "runtime_error" and res["test_results"][0]["actual_output_json"] is None)
 
     # 37. C++ Abort (SIGABRT)
     res = runner.execute_test_cases(
@@ -354,13 +365,11 @@ def run_comprehensive_judge_test_suite():
         wrapper_template="{{USER_CODE}}",
         test_cases=[{"id": "1", "input_json": "[]", "expected_output_json": "0", "is_sample": True}]
     )
-    record_test("C++ Abort (SIGABRT) crash detection", res["status"] == "runtime_error" and ("Abort" in res["error_message"] or res["test_results"][0]["exit_code"] in [134, -6, -signal.SIGABRT]))
+    record_test("C++ Abort (SIGABRT) crash detection", res["status"] == "runtime_error" and ("Abort" in res["error_message"] or "SIGABRT" in res["error_message"] or res["test_results"][0]["exit_code"] in [134, -6, -signal.SIGABRT]))
 
     # ============================================================================
     # SECTION 7: JAVASCRIPT (NODE.JS) ENGINE
     # ============================================================================
-    print("\n--- Section 7: JavaScript (Node.js) Engine ---")
-
     # 38. JS Syntax Error
     res = runner.execute_test_cases(
         language="javascript",

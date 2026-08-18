@@ -142,7 +142,7 @@ int main() {
     return 0;
 }
 """,
-        "compile_cmd": ["g++", "-O2", "-std=c++17", "{file}", "-o", "{output}"],
+        "compile_cmd": ["g++", "-O2", "-std=c++17", "-fsanitize=undefined", "-fno-sanitize-recover=all", "{file}", "-o", "{output}"],
         "run_cmd": ["{output}"]
     },
     "java": {

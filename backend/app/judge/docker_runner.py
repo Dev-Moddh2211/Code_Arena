@@ -57,15 +57,16 @@ class CodeRunner:
         start_time = time.perf_counter()
         logger.info("[Judge:Subprocess] Executing: %s (cwd=%s, timeout=%.2fs)", " ".join(cmd), cwd, timeout_sec)
 
-        # Build clean environment with security restrictions
-        clean_env = {
-            "PATH": os.environ.get("PATH", "/usr/local/bin:/usr/bin:/bin"),
+        # Build execution environment with security and runtime options
+        clean_env = dict(os.environ)
+        clean_env.update({
             "PYTHONUNBUFFERED": "1",
             "PYTHONIOENCODING": "utf-8",
             "NODE_OPTIONS": "--max-old-space-size=256",
             "LC_ALL": "en_US.UTF-8",
-            "LANG": "en_US.UTF-8"
-        }
+            "LANG": "en_US.UTF-8",
+            "UBSAN_OPTIONS": "halt_on_error=1:abort_on_error=1:print_stacktrace=1"
+        })
 
         # Snapshot child rusage before
         before_rusage = resource.getrusage(resource.RUSAGE_CHILDREN) if resource else None
@@ -380,6 +381,7 @@ class CodeRunner:
                 if is_ole:
                     # Output Limit Exceeded
                     tc_result["passed"] = False
+                    tc_result["actual_output_json"] = None
                     ole_msg = "Output Limit Exceeded: Program generated excessive output (>2MB)."
                     tc_result["error_message"] = ole_msg
                     all_passed = False
@@ -391,6 +393,7 @@ class CodeRunner:
                 elif ret == -999:
                     # Timeout (Infinite Loop / TLE)
                     tc_result["passed"] = False
+                    tc_result["actual_output_json"] = None
                     tle_msg = f"Time Limit Exceeded: Execution took longer than allowed {time_limit_ms}ms quota."
                     tc_result["error_message"] = tle_msg
                     all_passed = False
@@ -401,39 +404,44 @@ class CodeRunner:
 
                 elif ret != 0:
                     # Program crashed / fatal signal / unhandled exception
+                    # NEVER show actual output or treat as successful
+                    tc_result["actual_output_json"] = None
+
                     signal_detail = ""
-                    if ret in [139, -11]:
-                        signal_detail = "Segmentation fault (core dumped)"
-                    elif ret in [136, -8]:
-                        signal_detail = "Floating point exception"
-                    elif ret in [134, -6]:
-                        signal_detail = "Aborted (core dumped)"
-                    elif ret in [138, -7]:
-                        signal_detail = "Bus error"
-                    elif ret in [137, -9]:
-                        signal_detail = "Process killed (Memory or Resource Limit Exceeded)"
-                    elif ret in [141, -13]:
-                        signal_detail = "Broken pipe"
-                    elif ret in [143, -15]:
-                        signal_detail = "Process terminated"
+                    if ret in [-11, 139]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGSEGV (Segmentation Fault)"
+                    elif ret in [-8, 136]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGFPE (Floating Point Exception / Division by Zero)"
+                    elif ret in [-6, 134]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGABRT (Aborted / Assertion Failure)"
+                    elif ret in [-4, 132]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGILL (Illegal Instruction)"
+                    elif ret in [-7, -10, 135, 138]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGBUS (Bus Error)"
+                    elif ret in [-9, 137]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGKILL (Process Killed / Memory Limit Exceeded)"
+                    elif ret in [-15, 143]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGTERM (Process Terminated)"
+                    elif ret in [-24, 152]:
+                        signal_detail = "Runtime Error: Program terminated with signal SIGXCPU (CPU Time Limit Exceeded)"
 
                     full_err = norm_stderr
                     if signal_detail and signal_detail not in full_err:
                         full_err = f"{signal_detail}\n{full_err}".strip() if full_err else signal_detail
 
+                    final_err_msg = full_err or f"Runtime Error (Exit Code {ret})"
                     tc_result["passed"] = False
-                    tc_result["error_message"] = full_err or f"Runtime Error (Exit Code {ret})"
+                    tc_result["error_message"] = final_err_msg
                     all_passed = False
 
                     if overall_status == "accepted":
-                        # If killed by memory killer (SIGKILL / -9) and memory is high
-                        if ret in [137, -9] or memory_kb > (memory_limit_mb * 1024):
+                        if ret in [-9, 137] or memory_kb > (memory_limit_mb * 1024):
                             overall_status = "memory_limit_exceeded"
                             first_error_msg = f"Memory Limit Exceeded ({memory_kb // 1024}MB > {memory_limit_mb}MB)"
                         else:
                             overall_status = "runtime_error"
-                            first_error_msg = full_err or f"Runtime Error (Exit Code {ret})"
-                        first_stderr = full_err
+                            first_error_msg = final_err_msg
+                        first_stderr = final_err_msg
 
                 else:
                     # Compilation succeeded AND Program exited successfully (exitCode == 0)
