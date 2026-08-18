@@ -23,14 +23,14 @@ export const DescriptionTab: React.FC<DescriptionTabProps> = ({
   onToggleFavorite,
 }) => {
   return (
-    <div className="p-6 sm:p-7 space-y-6 text-[14px] text-slate-200 leading-relaxed bg-[#0d131f]">
+    <div className="p-4 sm:p-5 md:p-6 space-y-5 text-[13.5px] sm:text-[14px] text-slate-200 leading-relaxed bg-[#0d131f] min-w-0 max-w-full overflow-hidden break-words">
       {/* Title & Metas */}
-      <div className="space-y-3 pb-4 border-b border-[#1b2436]">
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{problem.title}</h1>
+      <div className="space-y-3 pb-4 border-b border-[#1b2436] min-w-0">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight break-words min-w-0">{problem.title}</h1>
           <button
             onClick={onToggleFavorite}
-            className={`p-1.5 rounded-lg border transition-colors ${
+            className={`shrink-0 p-1.5 rounded-lg border transition-colors ${
               problem.is_favorited
                 ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                 : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
@@ -54,8 +54,8 @@ export const DescriptionTab: React.FC<DescriptionTabProps> = ({
         </div>
       </div>
 
-      {/* Problem Description Markdown (Comfortable, readable 14px body text) */}
-      <div className="prose prose-invert prose-base max-w-none text-slate-200 text-[14px] leading-relaxed space-y-4 font-sans">
+      {/* Problem Description Markdown */}
+      <div className="prose prose-invert prose-base max-w-none text-slate-200 text-[13.5px] sm:text-[14px] leading-relaxed space-y-4 font-sans min-w-0 overflow-hidden break-words">
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeKatex]}
@@ -66,9 +66,9 @@ export const DescriptionTab: React.FC<DescriptionTabProps> = ({
 
       {/* Constraints */}
       {problem.constraints_md && (
-        <div className="rounded-xl border border-slate-800 bg-[#090e18] p-4 sm:p-5 space-y-2">
+        <div className="rounded-xl border border-slate-800 bg-[#090e18] p-3.5 sm:p-4 space-y-2 min-w-0 overflow-hidden">
           <h4 className="font-semibold text-white text-xs font-sans uppercase tracking-wider text-slate-400">Constraints:</h4>
-          <div className="prose prose-invert prose-sm max-w-none font-mono text-xs text-slate-300">
+          <div className="prose prose-invert prose-sm max-w-none font-mono text-xs text-slate-300 min-w-0 overflow-hidden break-words">
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}

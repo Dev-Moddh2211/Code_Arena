@@ -322,9 +322,9 @@ export const WorkspacePage: React.FC = () => {
           minRightWidth={450}
           storageKey="arena_workspace_split"
           left={
-            <div className="flex flex-col h-full bg-[#0d131f] border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
+            <div className="flex flex-col h-full min-w-0 bg-[#0d131f] border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
               {/* Tab Navigation with sky blue active highlight */}
-              <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1b2436] bg-[#090e18] text-xs overflow-x-auto">
+              <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1b2436] bg-[#090e18] text-xs overflow-x-auto min-w-0">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -342,7 +342,7 @@ export const WorkspacePage: React.FC = () => {
               </div>
 
               {/* Active Tab View */}
-              <div className="flex-1 overflow-y-auto bg-[#0d131f]">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 bg-[#0d131f]">
                 {activeTab === 'description' && (
                   <DescriptionTab
                     problem={problem}

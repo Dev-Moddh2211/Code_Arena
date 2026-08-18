@@ -35,12 +35,41 @@
 /* KaTeX typography */
 .katex {
   font-size: 1.05em;
+  max-width: 100%;
 }
 .katex-display {
   margin: 0.8em 0;
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.25em 0;
+}
+
+/* Markdown Prose wrapping & responsive safeguards */
+.prose {
+  max-width: 100% !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.prose p, .prose li, .prose h1, .prose h2, .prose h3, .prose h4 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+.prose pre {
+  max-width: 100% !important;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.prose code {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* ── Dark Syntax Highlighting Tokens (VS Code / Dark+ style) ── */
