@@ -22,6 +22,7 @@ import {
   ProblemListItem,
 } from '../../types';
 import { Button } from '../../components/common/Button';
+import { ResizableSplitPane } from '../../components/common/ResizableSplitPane';
 import { CodeEditor } from '../../components/workspace/CodeEditor';
 import { DescriptionTab } from '../../components/workspace/DescriptionTab';
 import { EditorialTab } from '../../components/workspace/EditorialTab';
@@ -313,117 +314,124 @@ export const WorkspacePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main 2-Column Split Workspace with visual dominance on Editor */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-2.5 p-2.5 overflow-hidden bg-[#080c14]">
-        {/* Left Context Panel (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col bg-[#0d131f] border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
-          {/* Tab Navigation with sky blue active highlight */}
-          <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1b2436] bg-[#090e18] text-xs overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id as any)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-colors whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'bg-slate-800 text-sky-400 shadow-xs border border-slate-700 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Active Tab View */}
-          <div className="flex-1 overflow-y-auto bg-[#0d131f]">
-            {activeTab === 'description' && (
-              <DescriptionTab
-                problem={problem}
-                similarProblems={similarProblems}
-                onReaction={handleReaction}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            )}
-            {activeTab === 'editorial' && <EditorialTab editorialMd={problem.editorial_md} />}
-            {activeTab === 'hints' && <HintsTab hints={hints} />}
-            {activeTab === 'submissions' && (
-              <SubmissionsTab submissions={submissions} isLoading={isSubmissionsLoading} />
-            )}
-            {activeTab === 'notes' && <NotesTab problemId={problem.id} />}
-          </div>
-        </div>
-
-        {/* Right Editor & Diagnostics Panel (7 cols - visually dominant) */}
-        <div className="lg:col-span-7 flex flex-col gap-2.5 overflow-hidden">
-          {/* Code Editor (Top 60%) */}
-          <div className="h-[60%] flex flex-col">
-            <CodeEditor
-              language={language}
-              code={code}
-              onChange={(val) => setCode(val || '')}
-              onReset={handleResetCode}
-              onLanguageChange={handleLanguageChange}
-              languages={supportedLanguages}
-            />
-          </div>
-
-          {/* Bottom Diagnostics / Test Cases Panel (40% - lighter visual weight) */}
-          <div className="h-[40%] flex flex-col bg-[#0d131f]/95 border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
-            {/* Toggle between Testcases and Console Output */}
-            <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1b2436] bg-[#090e18] text-xs">
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setBottomTab('testcases')}
-                  className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
-                    bottomTab === 'testcases'
-                      ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Test Cases
-                </button>
-                <button
-                  onClick={() => setBottomTab('console')}
-                  className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
-                    bottomTab === 'console'
-                      ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Console Output
-                </button>
+      {/* Main Draggable Split Workspace */}
+      <div className="flex-1 overflow-hidden p-2.5 bg-[#080c14]">
+        <ResizableSplitPane
+          defaultSplit={42}
+          minLeftWidth={320}
+          minRightWidth={450}
+          storageKey="arena_workspace_split"
+          left={
+            <div className="flex flex-col h-full bg-[#0d131f] border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
+              {/* Tab Navigation with sky blue active highlight */}
+              <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1b2436] bg-[#090e18] text-xs overflow-x-auto">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id as any)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-colors whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? 'bg-slate-800 text-sky-400 shadow-xs border border-slate-700 font-semibold'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
               </div>
 
-              {executionResult && (
-                <div className="text-[11px] font-mono">
-                  {executionResult.status === 'accepted' ? (
-                    <span className="text-emerald-400 font-semibold">✓ Accepted</span>
-                  ) : (
-                    <span className="text-rose-400 font-semibold capitalize">
-                      {executionResult.status.replace(/_/g, ' ')}
-                    </span>
+              {/* Active Tab View */}
+              <div className="flex-1 overflow-y-auto bg-[#0d131f]">
+                {activeTab === 'description' && (
+                  <DescriptionTab
+                    problem={problem}
+                    similarProblems={similarProblems}
+                    onReaction={handleReaction}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                )}
+                {activeTab === 'editorial' && <EditorialTab editorialMd={problem.editorial_md} />}
+                {activeTab === 'hints' && <HintsTab hints={hints} />}
+                {activeTab === 'submissions' && (
+                  <SubmissionsTab submissions={submissions} isLoading={isSubmissionsLoading} />
+                )}
+                {activeTab === 'notes' && <NotesTab problemId={problem.id} />}
+              </div>
+            </div>
+          }
+          right={
+            <div className="flex flex-col h-full gap-2.5 overflow-hidden">
+              {/* Code Editor (Top 60%) */}
+              <div className="h-[60%] flex flex-col min-h-0">
+                <CodeEditor
+                  language={language}
+                  code={code}
+                  onChange={(val) => setCode(val || '')}
+                  onReset={handleResetCode}
+                  onLanguageChange={handleLanguageChange}
+                  languages={supportedLanguages}
+                />
+              </div>
+
+              {/* Bottom Diagnostics / Test Cases Panel (40%) */}
+              <div className="h-[40%] flex flex-col min-h-0 bg-[#0d131f]/95 border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
+                {/* Toggle between Testcases and Console Output */}
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1b2436] bg-[#090e18] text-xs">
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setBottomTab('testcases')}
+                      className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                        bottomTab === 'testcases'
+                          ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Test Cases
+                    </button>
+                    <button
+                      onClick={() => setBottomTab('console')}
+                      className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                        bottomTab === 'console'
+                          ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      Console Output
+                    </button>
+                  </div>
+
+                  {executionResult && (
+                    <div className="text-[11px] font-mono">
+                      {executionResult.status === 'accepted' ? (
+                        <span className="text-emerald-400 font-semibold">✓ Accepted</span>
+                      ) : (
+                        <span className="text-rose-400 font-semibold capitalize">
+                          {executionResult.status.replace(/_/g, ' ')}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
 
-            {/* Sub-panel content */}
-            <div className="flex-1 overflow-hidden">
-              {bottomTab === 'testcases' ? (
-                <TestCasePanel
-                  sampleCases={sampleCases}
-                  customInput={customInput}
-                  onCustomInputChange={setCustomInput}
-                  isCustom={isCustom}
-                  onToggleCustom={setIsCustom}
-                />
-              ) : (
-                <ConsolePanel result={executionResult} isRunning={isRunning} />
-              )}
+                {/* Sub-panel content */}
+                <div className="flex-1 overflow-hidden">
+                  {bottomTab === 'testcases' ? (
+                    <TestCasePanel
+                      sampleCases={sampleCases}
+                      customInput={customInput}
+                      onCustomInputChange={setCustomInput}
+                      isCustom={isCustom}
+                      onToggleCustom={setIsCustom}
+                    />
+                  ) : (
+                    <ConsolePanel result={executionResult} isRunning={isRunning} />
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          }
+        />
       </div>
     </div>
   );
