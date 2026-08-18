@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  body {
+    background-color: #080c14;
+    color: #e2e8f0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Clean minimal dark scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+  }
+}
+
+/* KaTeX typography */
+.katex {
+  font-size: 1.05em;
+}
+.katex-display {
+  margin: 0.8em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25em 0;
+}
+
+/* ── Dark Syntax Highlighting Tokens (VS Code / Dark+ style) ── */
+.token-keyword    { color: #c586c0; font-weight: 600; }
+.token-string     { color: #ce9178; }
+.token-comment    { color: #6a9955; font-style: italic; }
+.token-function   { color: #dcdcaa; font-weight: 500; }
+.token-number     { color: #b5cea8; }
+.token-operator   { color: #d4d4d4; }
+.token-type       { color: #4ec9b0; }
+.token-variable   { color: #9cdcfe; }
+.token-return     { color: #c586c0; font-weight: 600; }
+.token-builtin    { color: #4ec9b0; }
+.token-bracket    { color: #ffd700; }
+.token-property   { color: #9cdcfe; }
+.token-decorator  { color: #dcdcaa; }
+
+/* ── Dark Heatmap Activity Cell Colors ── */
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2.5px;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+.heatmap-cell:hover {
+  transform: scale(1.2);
+}
+.heatmap-dark-0 { background-color: #161f30; }
+.heatmap-dark-1 { background-color: #064e3b; }
+.heatmap-dark-2 { background-color: #047857; }
+.heatmap-dark-3 { background-color: #059669; }
+.heatmap-dark-4 { background-color: #10b981; }
+
+/* ── Gaussian Runtime Histogram Bar ── */
+.histogram-bar {
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+.histogram-bar:hover {
+  opacity: 0.9;
+}
