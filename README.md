@@ -64,11 +64,6 @@ Docker Sandbox            Local Subprocess
        (AC, WA, TLE, MLE, CE)
 ```
 
-For detailed design specs, see the documentation in [`/docs`](./docs):
-- [Judge Execution Pipeline](./docs/judge-pipeline.md)
-- [Docker Sandbox Security](./docs/docker-architecture.md)
-- [System Architecture](./docs/architecture.md)
-
 ---
 
 ## Tech Stack
@@ -127,7 +122,6 @@ code-arena/
 │   ├── package.json
 │   └── vite.config.ts
 ├── screenshots/            # UI screenshots
-├── docs/                   # System design & architecture specs
 └── README.md
 ```
 
