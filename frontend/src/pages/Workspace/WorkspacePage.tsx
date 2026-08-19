@@ -10,7 +10,6 @@ import {
   History,
   Edit3,
 } from 'lucide-react';
-import { triggerConfetti } from '../../components/common/Confetti';
 import { problemsApi, submissionsApi } from '../../api';
 import {
   ProblemDetail,
@@ -21,6 +20,7 @@ import {
   ExecutionResult,
   ProblemListItem,
 } from '../../types';
+import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
 import { ResizableSplitPane } from '../../components/common/ResizableSplitPane';
 import { CodeEditor } from '../../components/workspace/CodeEditor';
@@ -64,56 +64,6 @@ export const WorkspacePage: React.FC = () => {
     { id: 'java', name: 'Java 17 (OpenJDK 17.0.10)' },
   ];
 
-  // Fetch Problem Data
-  useEffect(() => {
-    if (!slug) return;
-
-    const fetchProblemData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await problemsApi.getBySlug(slug);
-        setProblem(data);
-
-        // Fetch hints and testcases
-        try {
-          const hintsData = await problemsApi.getHints(data.slug);
-          setHints(hintsData || []);
-        } catch {
-          setHints([]);
-        }
-
-        setSampleCases(data.sample_test_cases || []);
-
-        // Set default starter code
-        const savedCode = localStorage.getItem(`code_${data.id}_${language}`);
-        if (savedCode) {
-          setCode(savedCode);
-        } else {
-          setStarterCode(data, language);
-        }
-
-        // Fetch similar problems
-        if (data.topic_tags && data.topic_tags.length > 0) {
-          try {
-            const sim = await problemsApi.list({
-              topic: data.topic_tags[0],
-              page_size: 4,
-            });
-            setSimilarProblems(sim.items.filter((p: ProblemListItem) => p.id !== data.id));
-          } catch (e) {
-            console.error('Failed to fetch similar problems', e);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProblemData();
-  }, [slug]);
-
   // Set starter code according to language
   const setStarterCode = (prob: ProblemDetail, lang: string) => {
     const config = prob.language_configs?.find((c) => c.language === lang);
@@ -139,17 +89,56 @@ export const WorkspacePage: React.FC = () => {
     }
   };
 
-  // Language switch
+  // Fetch Problem Data - always start with fresh starter code for the chosen language
+  useEffect(() => {
+    if (!slug) return;
+
+    const fetchProblemData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await problemsApi.getBySlug(slug);
+        setProblem(data);
+
+        // Fetch hints and testcases
+        try {
+          const hintsData = await problemsApi.getHints(data.slug);
+          setHints(hintsData || []);
+        } catch {
+          setHints([]);
+        }
+
+        setSampleCases(data.sample_test_cases || []);
+
+        // Always load clean starter code for the active language
+        setStarterCode(data, language);
+
+        // Fetch similar problems
+        if (data.topic_tags && data.topic_tags.length > 0) {
+          try {
+            const sim = await problemsApi.list({
+              topic: data.topic_tags[0],
+              page_size: 4,
+            });
+            setSimilarProblems(sim.items.filter((p: ProblemListItem) => p.id !== data.id));
+          } catch (e) {
+            console.error('Failed to fetch similar problems', e);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProblemData();
+  }, [slug]);
+
+  // Language switch - resets to fresh starter code for that language
   const handleLanguageChange = (newLang: string) => {
     if (!problem) return;
-    localStorage.setItem(`code_${problem.id}_${language}`, code);
     setLanguage(newLang);
-    const saved = localStorage.getItem(`code_${problem.id}_${newLang}`);
-    if (saved) {
-      setCode(saved);
-    } else {
-      setStarterCode(problem, newLang);
-    }
+    setStarterCode(problem, newLang);
   };
 
   // Reset starter code
@@ -190,10 +179,6 @@ export const WorkspacePage: React.FC = () => {
         code,
       });
       setExecutionResult(res);
-
-      if (res.status === 'accepted') {
-        triggerConfetti();
-      }
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -254,8 +239,8 @@ export const WorkspacePage: React.FC = () => {
 
   if (isLoading || !problem) {
     return (
-      <div className="flex justify-center items-center py-32 bg-[#080c14]">
-        <svg className="animate-spin h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24">
+      <div className="flex justify-center items-center py-32 bg-[#1a1a1a]">
+        <svg className="animate-spin h-6 w-6 text-[#FFA116]" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
@@ -276,28 +261,32 @@ export const WorkspacePage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-[#080c14] overflow-hidden text-slate-300">
-      {/* Top Workspace Bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#0d131f] border-b border-[#1b2436] text-xs">
+    <div className="flex flex-col h-[calc(100vh-3.25rem)] bg-[#1a1a1a] overflow-hidden text-neutral-300">
+      {/* Top Workspace Bar - LeetCode Style */}
+      <div className="flex items-center justify-between px-4 py-2 bg-[#222222] border-b border-[#282828] text-xs">
         <div className="flex items-center gap-3">
           <Link
             to="/problems"
-            className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors font-medium"
+            className="flex items-center gap-1 text-neutral-400 hover:text-white transition-colors font-medium"
           >
-            <ChevronLeft className="h-4 w-4" /> Problems
+            <ChevronLeft className="h-4 w-4" /> Problems List
           </Link>
-          <span className="text-slate-600">/</span>
+          <span className="text-neutral-600">/</span>
           <span className="font-semibold text-white">{problem.title}</span>
+          <Badge variant={problem.difficulty as any} size="sm">
+            {problem.difficulty}
+          </Badge>
         </div>
 
-        {/* Action Buttons: Run in secondary neutral slate, Submit in emerald */}
+        {/* Action Buttons: Run & Submit */}
         <div className="flex items-center gap-2">
           <Button
             variant="secondary"
             size="sm"
             onClick={handleRun}
             isLoading={isRunning}
-            leftIcon={<Play className="h-3.5 w-3.5 text-slate-300" />}
+            leftIcon={<Play className="h-3.5 w-3.5 text-neutral-300 fill-current" />}
+            className="bg-[#2e2e2e] hover:bg-[#383838] text-neutral-200 border border-[#3e3e3e]"
           >
             Run
           </Button>
@@ -308,6 +297,7 @@ export const WorkspacePage: React.FC = () => {
             onClick={handleSubmit}
             isLoading={isRunning}
             leftIcon={<Upload className="h-3.5 w-3.5" />}
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-sm border-none"
           >
             Submit
           </Button>
@@ -315,24 +305,24 @@ export const WorkspacePage: React.FC = () => {
       </div>
 
       {/* Main Draggable Split Workspace */}
-      <div className="flex-1 overflow-hidden p-2.5 bg-[#080c14]">
+      <div className="flex-1 overflow-hidden p-2 bg-[#1a1a1a]">
         <ResizableSplitPane
           defaultSplit={42}
           minLeftWidth={320}
           minRightWidth={450}
           storageKey="arena_workspace_split"
           left={
-            <div className="flex flex-col h-full min-w-0 bg-[#0d131f] border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
-              {/* Tab Navigation with sky blue active highlight */}
-              <div className="flex items-center gap-1 px-3 py-2 border-b border-[#1b2436] bg-[#090e18] text-xs overflow-x-auto min-w-0">
+            <div className="flex flex-col h-full min-w-0 bg-[#222222] border border-[#2e2e2e] rounded-xl overflow-hidden shadow-sm">
+              {/* Tab Navigation */}
+              <div className="flex items-center gap-1 px-3 py-1.5 border-b border-[#282828] bg-[#1c1c1c] text-xs overflow-x-auto min-w-0">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id as any)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-colors whitespace-nowrap ${
                       activeTab === tab.id
-                        ? 'bg-slate-800 text-sky-400 shadow-xs border border-slate-700 font-semibold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#2a2a2a] text-white shadow-xs border border-[#383838] font-semibold'
+                        : 'text-neutral-400 hover:text-neutral-200'
                     }`}
                   >
                     {tab.icon}
@@ -342,7 +332,7 @@ export const WorkspacePage: React.FC = () => {
               </div>
 
               {/* Active Tab View */}
-              <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 bg-[#0d131f]">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 bg-[#1e1e1e]">
                 {activeTab === 'description' && (
                   <DescriptionTab
                     problem={problem}
@@ -368,7 +358,7 @@ export const WorkspacePage: React.FC = () => {
               minSecondSize={140}
               storageKey="arena_editor_split"
               top={
-                <div className="flex flex-col h-full min-h-0">
+                <div className="flex flex-col h-full min-h-0 bg-[#1e1e1e] border border-[#2e2e2e] rounded-xl overflow-hidden">
                   <CodeEditor
                     language={language}
                     code={code}
@@ -380,26 +370,26 @@ export const WorkspacePage: React.FC = () => {
                 </div>
               }
               bottom={
-                <div className="flex flex-col h-full min-h-0 bg-[#0d131f]/95 border border-[#1b2436] rounded-xl overflow-hidden shadow-xs">
+                <div className="flex flex-col h-full min-h-0 bg-[#222222] border border-[#2e2e2e] rounded-xl overflow-hidden shadow-sm">
                   {/* Toggle between Testcases and Console Output */}
-                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1b2436] bg-[#090e18] text-xs">
+                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#282828] bg-[#1c1c1c] text-xs">
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => setBottomTab('testcases')}
-                        className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                        className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                           bottomTab === 'testcases'
-                            ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                            : 'text-slate-400 hover:text-slate-200'
+                            ? 'bg-[#2a2a2a] text-white border border-[#383838] shadow-xs font-semibold'
+                            : 'text-neutral-400 hover:text-neutral-200'
                         }`}
                       >
                         Test Cases
                       </button>
                       <button
                         onClick={() => setBottomTab('console')}
-                        className={`px-3 py-1 rounded-md font-mono text-xs font-medium transition-colors ${
+                        className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                           bottomTab === 'console'
-                            ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-xs font-semibold'
-                            : 'text-slate-400 hover:text-slate-200'
+                            ? 'bg-[#2a2a2a] text-white border border-[#383838] shadow-xs font-semibold'
+                            : 'text-neutral-400 hover:text-neutral-200'
                         }`}
                       >
                         Console Output
@@ -420,7 +410,7 @@ export const WorkspacePage: React.FC = () => {
                   </div>
 
                   {/* Sub-panel content */}
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-hidden bg-[#1e1e1e]">
                     {bottomTab === 'testcases' ? (
                       <TestCasePanel
                         sampleCases={sampleCases}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../../components/common/Button';
+import { Logo } from '../../components/common/Logo';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,14 +30,11 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 bg-[#080c14] text-slate-300">
-      <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-800 bg-[#0d131f] p-8 shadow-2xl">
-        <div className="text-center space-y-1.5">
-          <div className="flex h-10 w-10 mx-auto items-center justify-center rounded-xl bg-emerald-600 text-white font-mono text-sm font-bold shadow-xs">
-            CA
-          </div>
-          <h1 className="text-xl font-bold text-white">Create Arena Account</h1>
-          <p className="text-xs text-slate-400">Join engineers practicing DSA in isolated workspaces.</p>
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 bg-[#1a1a1a] text-neutral-300">
+      <div className="w-full max-w-md space-y-6 rounded-2xl border border-[#282828] bg-[#222222] p-8 shadow-2xl">
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <Logo size="lg" />
+          <h1 className="text-xl font-bold text-white pt-2">Create Account</h1>
         </div>
 
         {error && (
@@ -47,7 +45,7 @@ export const RegisterPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Username</label>
+            <label className="block text-neutral-300 font-semibold mb-1">Username</label>
             <input
               type="text"
               required
@@ -55,24 +53,24 @@ export const RegisterPage: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="alex_coder"
-              className="w-full bg-[#090e18] border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-500 text-xs"
+              className="w-full bg-[#1a1a1a] border border-[#333333] rounded-lg p-2.5 text-neutral-200 focus:outline-none focus:border-[#555] text-xs"
             />
           </div>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Email Address</label>
+            <label className="block text-neutral-300 font-semibold mb-1">Email Address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full bg-[#090e18] border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-500 text-xs"
+              className="w-full bg-[#1a1a1a] border border-[#333333] rounded-lg p-2.5 text-neutral-200 focus:outline-none focus:border-[#555] text-xs"
             />
           </div>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Password</label>
+            <label className="block text-neutral-300 font-semibold mb-1">Password</label>
             <input
               type="password"
               required
@@ -80,7 +78,7 @@ export const RegisterPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-[#090e18] border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-500 text-xs"
+              className="w-full bg-[#1a1a1a] border border-[#333333] rounded-lg p-2.5 text-neutral-200 focus:outline-none focus:border-[#555] text-xs"
             />
           </div>
 
@@ -89,15 +87,15 @@ export const RegisterPage: React.FC = () => {
             size="md"
             type="submit"
             isLoading={isSubmitting}
-            className="w-full mt-2"
+            className="w-full mt-2 bg-[#FFA116] hover:bg-[#ffb038] text-neutral-900 font-bold border-none"
           >
             Create Account
           </Button>
         </form>
 
-        <p className="text-center text-xs text-slate-400">
+        <p className="text-center text-xs text-neutral-400">
           Already have an account?{' '}
-          <Link to="/login" className="text-emerald-400 hover:underline font-medium">
+          <Link to="/login" className="text-[#FFA116] hover:underline font-medium">
             Sign In
           </Link>
         </p>

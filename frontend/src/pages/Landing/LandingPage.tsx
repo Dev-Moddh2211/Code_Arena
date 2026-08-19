@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Terminal,
+  Code2,
+  Cpu,
   Layers,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Badge } from '../../components/common/Badge';
@@ -22,8 +25,8 @@ interface LanguageSnippet {
 const LANGUAGE_SNIPPETS: LanguageSnippet[] = [
   {
     id: 'python',
-    name: 'Python',
-    version: '3.11',
+    name: 'Python 3',
+    version: '3.11.10',
     filename: 'solution.py',
     runtime: '12 ms',
     memory: '14.2 MB',
@@ -39,8 +42,8 @@ const LANGUAGE_SNIPPETS: LanguageSnippet[] = [
   },
   {
     id: 'cpp',
-    name: 'C++',
-    version: 'g++ 13',
+    name: 'C++ 17',
+    version: 'GCC 13.2',
     filename: 'solution.cpp',
     runtime: '2 ms',
     memory: '9.8 MB',
@@ -64,7 +67,7 @@ public:
   {
     id: 'javascript',
     name: 'JavaScript',
-    version: 'Node 20',
+    version: 'Node.js 20',
     filename: 'solution.js',
     runtime: '45 ms',
     memory: '31.6 MB',
@@ -80,7 +83,7 @@ public:
   },
   {
     id: 'java',
-    name: 'Java',
+    name: 'Java 17',
     version: 'OpenJDK 17',
     filename: 'Solution.java',
     runtime: '3 ms',
@@ -117,68 +120,69 @@ export const LandingPage: React.FC = () => {
     LANGUAGE_SNIPPETS.find((l) => l.id === selectedLang) || LANGUAGE_SNIPPETS[0];
 
   return (
-    <div className="bg-[#080c14] text-slate-300 min-h-screen">
+    <div className="bg-[#1a1a1a] text-neutral-300 min-h-screen">
       {/* ─────────────────────────────────────────────────────────────
-          1. HERO SECTION (NATURAL & HUMAN-CRAFTED)
+          1. HERO SECTION (CLEAN & CONFIDENT)
           ───────────────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
-        {/* Top Pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-[#0d131f] px-3.5 py-1 text-xs text-slate-300 mb-6 shadow-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          <span className="font-mono text-slate-300">Supports Python · C++ · Java · JavaScript</span>
-        </div>
-
-        {/* Natural Headline */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-3xl mx-auto leading-[1.15]">
-          Practice coding interviews with a real online judge.
+      <section className="mx-auto max-w-4xl px-4 sm:px-6 pt-16 pb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Practice coding interviews with an isolated online judge.
         </h1>
 
-        {/* Natural Subtitle */}
-        <p className="mt-5 text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Solve algorithm problems, follow company-specific sheets, read detailed editorials, and track your progress—all in one place.
+        <p className="mt-4 text-sm sm:text-base text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+          Solve algorithmic problems in Python, C++, Java, and JavaScript with fast subprocess execution, testcase normalization, and company roadmaps.
         </p>
 
-        {/* Action Buttons */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <Link to="/problems">
-            <Button variant="primary" size="md" rightIcon={<ArrowRight className="h-4 w-4" />}>
+            <Button
+              variant="primary"
+              size="md"
+              rightIcon={<ArrowRight className="h-4 w-4" />}
+              className="bg-[#FFA116] hover:bg-[#ffb038] text-neutral-900 font-bold border-none rounded-lg px-5 py-2.5 text-sm"
+            >
               Start Solving
             </Button>
           </Link>
 
           <Link to="/sheets">
-            <Button variant="secondary" size="md" leftIcon={<Layers className="h-4 w-4" />}>
-              Company Sheets
+            <Button
+              variant="secondary"
+              size="md"
+              leftIcon={<Layers className="h-4 w-4" />}
+              className="bg-[#262626] hover:bg-[#303030] text-neutral-200 border border-[#383838] rounded-lg px-5 py-2.5 text-sm font-medium"
+            >
+              Explore Sheets
             </Button>
           </Link>
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. LIVE IDE WORKSPACE PREVIEW (READABLE CODE EDITOR)
+          2. LIVE WORKSPACE PREVIEW (FOCAL POINT)
           ───────────────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="rounded-xl border border-slate-800 bg-[#0d131f] shadow-2xl overflow-hidden">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between border-b border-slate-800 bg-[#090e18] px-4 py-2.5">
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 pb-16">
+        <div className="rounded-2xl border border-[#2e2e2e] bg-[#1e1e1e] overflow-hidden">
+          {/* Top Bar with Language Tabs */}
+          <div className="flex items-center justify-between border-b border-[#2a2a2a] bg-[#222222] px-4 py-2.5">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-rose-500/80" />
-              <span className="h-3 w-3 rounded-full bg-amber-500/80" />
-              <span className="h-3 w-3 rounded-full bg-emerald-500/80" />
-              <span className="ml-2 font-mono text-xs text-slate-400">
-                arena-workspace — Signal Pair
+              <span className="h-3 w-3 rounded-full bg-[#383838]" />
+              <span className="h-3 w-3 rounded-full bg-[#383838]" />
+              <span className="h-3 w-3 rounded-full bg-[#383838]" />
+              <span className="ml-2 font-mono text-xs text-neutral-400">
+                solution-preview — Signal Pair
               </span>
             </div>
 
-            <div className="flex items-center gap-1 bg-[#0d131f] p-0.5 rounded-lg border border-slate-800">
+            <div className="flex items-center gap-1 bg-[#1a1a1a] p-0.5 rounded-lg border border-[#2e2e2e]">
               {LANGUAGE_SNIPPETS.map((lang) => (
                 <button
                   key={lang.id}
                   onClick={() => setSelectedLang(lang.id)}
-                  className={`px-2.5 py-1 text-xs font-mono rounded transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                     selectedLang === lang.id
-                      ? 'bg-slate-800 text-sky-400 font-semibold shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#2e2e2e] text-white font-semibold'
+                      : 'text-neutral-400 hover:text-neutral-200'
                   }`}
                 >
                   {lang.name}
@@ -187,52 +191,52 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* IDE Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
-            {/* Left: Code Snippet (Larger, more readable font) */}
-            <div className="lg:col-span-7 p-5 bg-[#090e18]">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-mono pb-2.5 border-b border-slate-800/80 mb-3.5">
+          {/* Code & Evaluation Panels */}
+          <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-[#2a2a2a]">
+            {/* Left: Code */}
+            <div className="md:col-span-7 p-4 sm:p-5 bg-[#171717]">
+              <div className="flex items-center justify-between text-xs text-neutral-500 font-mono pb-2 border-b border-[#262626] mb-3">
                 <span>{currentSnippet.filename}</span>
                 <span>{currentSnippet.version}</span>
               </div>
-              <pre className="font-mono text-[13px] sm:text-sm text-slate-200 leading-relaxed overflow-x-auto whitespace-pre">
+              <pre className="font-mono text-xs sm:text-[13px] text-neutral-200 leading-relaxed overflow-x-auto whitespace-pre">
                 {currentSnippet.code}
               </pre>
             </div>
 
-            {/* Right: Judge Output Console */}
-            <div className="lg:col-span-5 p-5 bg-[#0d131f] flex flex-col justify-between space-y-4">
+            {/* Right: Evaluation */}
+            <div className="md:col-span-5 p-4 sm:p-5 bg-[#1e1e1e] flex flex-col justify-between space-y-4">
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 pb-2">
+                <div className="flex items-center justify-between text-xs font-mono text-neutral-400 border-b border-[#2a2a2a] pb-2">
                   <span className="flex items-center gap-1.5 font-semibold text-white">
-                    <Terminal className="h-3.5 w-3.5 text-emerald-400" /> Judge Evaluation
+                    <Terminal className="h-3.5 w-3.5 text-emerald-400" /> Output Comparator
                   </span>
-                  <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                  <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded text-[11px] font-semibold">
                     Accepted
                   </span>
                 </div>
 
                 <div className="space-y-2 text-xs font-mono">
-                  <div className="p-2.5 rounded bg-[#090e18] border border-slate-800/80 space-y-1">
-                    <div className="text-slate-400 text-[11px]">Test Case 1 (Sample)</div>
-                    <div className="text-slate-300">Input: readings = [-3, 4, 3, 90], target = 0</div>
+                  <div className="p-2.5 rounded-lg bg-[#171717] border border-[#282828] space-y-1">
+                    <div className="text-neutral-500 text-[11px]">Test Case 1 (Sample)</div>
+                    <div className="text-neutral-300">Input: readings = [-3, 4, 3, 90], target = 0</div>
                     <div className="text-emerald-400">✓ Output: [0, 2] · Match</div>
                   </div>
 
-                  <div className="p-2.5 rounded bg-[#090e18] border border-slate-800/80 space-y-1">
-                    <div className="text-slate-400 text-[11px]">Test Case 2 (Hidden Evaluation)</div>
-                    <div className="text-slate-300">Input: readings = [10, -5, 20, -15, 8], target = -20</div>
+                  <div className="p-2.5 rounded-lg bg-[#171717] border border-[#282828] space-y-1">
+                    <div className="text-neutral-500 text-[11px]">Test Case 2 (Hidden Evaluation)</div>
+                    <div className="text-neutral-300">Input: readings = [10, -5, 20, -15, 8], target = -20</div>
                     <div className="text-emerald-400">✓ Output: [1, 3] · Match</div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <div className="pt-2 border-t border-[#2a2a2a] flex items-center justify-between text-xs font-mono text-neutral-400">
                 <span>Runtime: <strong className="text-emerald-400">{currentSnippet.runtime}</strong></span>
-                <span>Memory: <strong className="text-slate-200">{currentSnippet.memory}</strong></span>
+                <span>Memory: <strong className="text-neutral-200">{currentSnippet.memory}</strong></span>
                 <Link to="/problems/signal-pair">
-                  <span className="text-emerald-400 hover:underline flex items-center gap-1">
-                    Open IDE <ArrowRight className="h-3 w-3" />
+                  <span className="text-[#FFA116] hover:underline flex items-center gap-1">
+                    Open in Editor <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
               </div>
@@ -242,60 +246,100 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          3. PRACTICE PROBLEMS LIST
+          3. CLEAN PRODUCT CAPABILITIES (MINIMALIST, NO HEAVY CARDS)
           ───────────────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800">
-        <div className="flex items-center justify-between mb-6">
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 border-t border-[#282828]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-left">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+              <Cpu className="h-4 w-4 text-[#FFA116]" />
+              <h3>Sandboxed Execution</h3>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Compile and run Python, C++ 17, Java 17, and Node.js 20 with isolated process limits and memory safeguards.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+              <Terminal className="h-4 w-4 text-[#FFA116]" />
+              <h3>Smart Comparator</h3>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Handles whitespace normalization, floating point tolerances, and unordered array matching for robust verdicts.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+              <Layers className="h-4 w-4 text-[#FFA116]" />
+              <h3>Curated Interview Sheets</h3>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Follow roadmaps for Google, Amazon, Meta, and Top 150 interview patterns with full editorial walkthroughs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. POPULAR PROBLEMS LIST
+          ───────────────────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 border-t border-[#282828]">
+        <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-xl font-bold text-white">Popular Practice Problems</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Explore standard patterns and test your solutions live.</p>
+            <h2 className="text-lg font-bold text-white">Popular Practice Problems</h2>
+            <p className="text-xs text-neutral-400 mt-0.5">Explore standard problem patterns and test your solutions live.</p>
           </div>
           <Link
             to="/problems"
-            className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+            className="text-xs font-semibold text-[#FFA116] hover:underline flex items-center gap-1"
           >
-            View All Problems <ChevronRight className="h-3.5 w-3.5" />
+            View All <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-[#0d131f] overflow-hidden">
+        <div className="rounded-xl border border-[#282828] bg-[#202020] overflow-hidden">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 bg-[#090e18] text-slate-400 font-semibold">
+              <tr className="border-b border-[#282828] bg-[#191919] text-neutral-400 font-semibold">
                 <th className="py-3 px-4">Title</th>
                 <th className="py-3 px-4 w-28">Difficulty</th>
                 <th className="py-3 px-4 hidden sm:table-cell">Topics</th>
                 <th className="py-3 px-4 w-24">Acceptance</th>
-                <th className="py-3 px-4 w-24 text-right">Action</th>
+                <th className="py-3 px-4 w-20 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono">
+            <tbody className="divide-y divide-[#282828]">
               {FEATURED_PROBLEMS.map((p) => (
-                <tr key={p.slug} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-3 px-4 font-sans font-medium text-white">
-                    <Link to={`/problems/${p.slug}`} className="hover:text-sky-400 transition-colors">
+                <tr key={p.slug} className="hover:bg-[#282828]/50 transition-colors">
+                  <td className="py-3 px-4 font-medium text-white">
+                    <Link to={`/problems/${p.slug}`} className="hover:text-[#FFA116] transition-colors">
                       {p.title}
                     </Link>
                   </td>
-                  <td className="py-3 px-4 font-sans">
+                  <td className="py-3 px-4">
                     <Badge variant={p.difficulty as any} size="sm">
                       {p.difficulty}
                     </Badge>
                   </td>
                   <td className="py-3 px-4 hidden sm:table-cell">
-                    <div className="flex flex-wrap gap-1 font-sans">
+                    <div className="flex flex-wrap gap-1">
                       {p.topics.map((t) => (
-                        <span key={t} className="px-1.5 py-0.5 text-[10px] rounded bg-slate-800 text-slate-300 border border-slate-700">
+                        <span
+                          key={t}
+                          className="px-1.5 py-0.5 text-[10px] rounded bg-[#2a2a2a] text-neutral-300 border border-[#383838]"
+                        >
                           {t}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">{p.acceptance}</td>
-                  <td className="py-3 px-4 text-right font-sans">
+                  <td className="py-3 px-4 text-neutral-400 font-mono">{p.acceptance}</td>
+                  <td className="py-3 px-4 text-right">
                     <Link
                       to={`/problems/${p.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 hover:text-sky-300"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#FFA116] hover:underline"
                     >
                       Solve <ArrowRight className="h-3 w-3" />
                     </Link>
@@ -304,32 +348,6 @@ export const LandingPage: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────
-          5. CLEAN CTA SECTION
-          ───────────────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 text-center border-t border-slate-800">
-        <div className="rounded-2xl border border-slate-800 bg-[#0d131f] p-8 sm:p-12 space-y-4 max-w-2xl mx-auto shadow-xl">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Start solving algorithmic challenges.
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
-            Pick a problem, write your solution in Python, C++, Java, or JS, and run against hidden test cases instantly.
-          </p>
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/problems">
-              <Button variant="primary" size="md" rightIcon={<ArrowRight className="h-4 w-4" />}>
-                Start Solving
-              </Button>
-            </Link>
-            <Link to="/sheets">
-              <Button variant="secondary" size="md">
-                Explore Roadmaps
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
     </div>
